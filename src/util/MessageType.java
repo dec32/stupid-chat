@@ -1,2 +1,2 @@
-package view;
+package util;
 public enum MessageType {SENDED,RECIEVED}

@@ -2,6 +2,7 @@ package view;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import util.MessageType;
 
 //TODO: 不应当继承 Label，这样子会导致文字无法选中和复制
 public class MessageBubble extends Label{

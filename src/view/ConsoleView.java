@@ -1,14 +1,34 @@
 package view;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
 import javafx.scene.control.TextArea;
 
-public class TextAreaPrintStream extends PrintStream{
+public class ConsoleView extends TextArea{
+	public ConsoleView() {
+		super();
+		redirectSystemOut();
+	}
 	
+	private void redirectSystemOut() {
+		/*
+		 * 这里要提供一个没有任何用处的OutputStream
+		 * 原因请看 TextAreaPrintStream 类的解释
+		 * 我知道这样写实在是太丑了, 但是我太蠢了所以想不到别的办法
+		 */
+		OutputStream ops = new OutputStream() {		
+			@Override
+			public void write(int b) throws IOException {
+			}
+		};	
+		System.setOut(new TextAreaPrintStream(ops, this));
+	}
+}
+
+class TextAreaPrintStream extends PrintStream{
 	private TextArea ta;
-	
 	public TextAreaPrintStream(OutputStream ops,TextArea ta) {
 		/*
 		 * System.out 是一个 PrintStream, 其各种 print 函数最终都会调用 write 方法

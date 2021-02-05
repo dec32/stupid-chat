@@ -22,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import util.MessageType;
 
 public class ChatWindow extends Stage{
 	private Controller controller;
@@ -31,6 +32,8 @@ public class ChatWindow extends Stage{
 	private ScrollPane msgScrollPane;
 	private TextField typeField = new TextField();
 	private Button sendButton = new Button("发送"); 
+	//方便测试，待删除
+//	private ConsoleView consoleView = new ConsoleView();
 	
 	
 	public ChatWindow(Controller controller, SocketAddress socketAddress) {
@@ -54,7 +57,8 @@ public class ChatWindow extends Stage{
 		msgScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		HBox typePane = new HBox(typeField,sendButton);
 		mainLayout.getChildren().addAll(msgScrollPane, typePane);
-		
+		//方便测试，待删除
+//		mainLayout.getChildren().add(consoleView);
 		
 		VBox.setVgrow(msgScrollPane, Priority.ALWAYS);
 		HBox.setHgrow(typeField, Priority.ALWAYS);
@@ -69,15 +73,15 @@ public class ChatWindow extends Stage{
 		this.setTitle("Stupid Chat");
 		this.setScene(new Scene(mainLayout));
 		
-		MessageBubble sendedMessageBubble = new MessageBubble("发出消息",MessageType.SENDED);
-		MessageBox sendedMessageBox = new MessageBox(sendedMessageBubble);
-		
-		MessageBubble receivedMessageBubble = new MessageBubble("收到消息",MessageType.RECIEVED);
-		MessageBox receivedMessageBox = new MessageBox(receivedMessageBubble);
-		
-		
-		msgPane.getChildren().add(sendedMessageBox);
-		msgPane.getChildren().add(receivedMessageBox);
+//		MessageBubble sendedMessageBubble = new MessageBubble("发出消息",MessageType.SENDED);
+//		MessageBox sendedMessageBox = new MessageBox(sendedMessageBubble);
+//		
+//		MessageBubble receivedMessageBubble = new MessageBubble("收到消息",MessageType.RECIEVED);
+//		MessageBox receivedMessageBox = new MessageBox(receivedMessageBubble);
+//		
+//		
+//		msgPane.getChildren().add(sendedMessageBox);
+//		msgPane.getChildren().add(receivedMessageBox);
 	}
 	
 	public void initListener() {

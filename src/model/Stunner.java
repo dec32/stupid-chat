@@ -34,7 +34,6 @@ public class Stunner {
 			if(publicSocketAddress != null) {
 				break;
 			}
-			System.out.println("返回值为空");
 		}
 		return publicSocketAddress;
 	}
@@ -49,7 +48,7 @@ public class Stunner {
 			DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName("stun.voip.aebc.com"), 3478);
 			socket.send(packet);
 		} catch (Exception e) {
-			System.out.println("发送STUN报文失败");
+			System.out.println("Failed to send STUN request.");
 			return null;
 		}
 		
@@ -65,78 +64,25 @@ public class Stunner {
 			MappedAddress ma = (MappedAddress) mh.getMessageAttribute(MessageAttributeType.MappedAddress);
 			String ip = ma.getAddress().getInetAddress().toString().split("/")[1];
 			int port = ma.getPort();
-			System.out.println("公网地址/端口：" + ip + ":" + port);
+			System.out.println("Public socket address: " + ip + ":" + port);
 			return new InetSocketAddress(ip, port);
 		} catch (SocketTimeoutException e) {
-			System.out.println("等待 STUN 回复超时");
+			System.out.println("No STUN response. Timeout.");
 			return null;
 		} catch (IOException e) {
-			System.out.println("接收 STUN 报文遇到异常");
+			System.out.println("Exception occured while receiving STUN response.");
 			return null;
 		} catch (MessageHeaderParsingException e) {
-			System.out.println("无法解析 STUN 报文");
+			System.out.println("Cannot parse STUN response.");
 			return null;
 		} catch (MessageAttributeParsingException e) {
-			System.out.println("无法解析 STUN 报文");
+			System.out.println("Cannot parse STUN response.");
 			return null;
 		} catch (UtilityException e) {
-			System.out.println("接收 STUN 报文遇到异常");
+			System.out.println("Exception occured while receiving STUN response.");
 			return null;
 		}		
 	}
 	
-//	public boolean tryStun(){
-//		try {
-//			sendStunRequest();
-//			recieveStunResponse();
-//		} catch (SocketTimeoutException e) {
-//			System.out.println("STUN 请求超时");
-//			return false;
-//			
-//		} catch (UtilityException e) {
-//			System.out.println("STUN 遇到错误");
-//		} catch (IOException e) {
-//			System.out.println("STUN 遇到错误");
-//		} catch (MessageHeaderParsingException e) {
-//			System.out.println("STUN 遇到错误");
-//		} catch (MessageAttributeParsingException e) {
-//			System.out.println("STUN 遇到错误");
-//		}
-//		System.out.println("公网地址/端口：" + publicSocketAddress.getAddress() + ":" + publicSocketAddress.getPort());
-//		return true;
-//	}
-	
-	
-	
-	
-//	private void sendStunRequest() throws UtilityException, IOException {
-//		MessageHeader mh = new MessageHeader(MessageHeaderType.BindingRequest);
-//		mh.generateTransactionID();
-//		byte[] data = mh.getBytes();	
-//		DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName("stun.voip.aebc.com"), 3478);
-//		socket.send(packet);
-//	}
-//	
-//	private void recieveStunResponse() throws IOException, MessageHeaderParsingException, MessageAttributeParsingException, UtilityException {
-//		byte[] buf = new byte[200];
-//		DatagramPacket packet = new DatagramPacket(buf, buf.length);
-//		socket.setSoTimeout(3000);
-//		try {
-//			socket.receive(packet);
-//		} catch (SocketTimeoutException e) {
-//			System.out.println("等待 STUN 回复超时");
-//			return;
-//		}
-//		
-//		byte[] data = packet.getData();
-//		MessageHeader mh = new MessageHeader();
-//		mh = MessageHeader.parseHeader(data);
-//		mh.parseAttributes(data);
-//		MappedAddress ma = (MappedAddress) mh.getMessageAttribute(MessageAttributeType.MappedAddress);
-//		String ip = ma.getAddress().getInetAddress().toString().split("/")[1];
-//		int port = ma.getPort();
-//		this.publicSocketAddress = new InetSocketAddress(ip, port);
-//		
-//	}	
 	
 }

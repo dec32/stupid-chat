@@ -21,8 +21,6 @@ public class View {
 		this.model = model;
 	}
 
-
-	
 	public void init(InetSocketAddress publicSocketAddress) {
 		initWindow = new InitWindow(controller,publicSocketAddress);
 		initWindow.show();
@@ -36,6 +34,10 @@ public class View {
 	
 	public void displayMessage(String msg) {
 		chatWindow.displayMessage(msg);
+	}
+	
+	public void confirmMessage(int id) {
+		
 	}
 
 	

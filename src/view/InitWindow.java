@@ -29,6 +29,7 @@ public class InitWindow extends Stage{
 		String ip = publicSocketAddress.getAddress().getHostAddress();
 		int port = publicSocketAddress.getPort();		
 		socketAddressField.setText(ip + ":" + port);
+		socketAddressField.setEditable(false);
 		VBox mainLayout = new VBox(
 			socketAddressLabel,
 			socketAddressField,
@@ -58,8 +59,8 @@ public class InitWindow extends Stage{
 		String ip = remoteSocketAddressField.getText().split(":")[0];
 		int port = Integer.valueOf(remoteSocketAddressField.getText().split(":")[1]);
 		try {
-			SocketAddress socketAddress = new InetSocketAddress(InetAddress.getByName(ip), port);
-			controller.startChat(socketAddress);
+			InetSocketAddress inetSocketAddress = new InetSocketAddress(InetAddress.getByName(ip), port);
+			controller.startChat(inetSocketAddress);
 		} catch (UnknownHostException e) {
 			System.out.println("无法识别地址或端口号");
 		}
