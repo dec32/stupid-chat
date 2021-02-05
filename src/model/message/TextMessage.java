@@ -16,7 +16,7 @@ public class TextMessage extends Message{
 	public TextMessage(SocketAddress socketAddress, String content) {
 		super(socketAddress);
 		this.content = content;
-		this.id = new Random().nextInt();
+		this.id = Math.abs(new Random().nextInt());
 	}
 
 	public String getContent() {

@@ -5,6 +5,7 @@ import java.net.SocketAddress;
 
 import controller.Controller;
 import model.Model;
+import model.message.Message;
 
 public class View {
 	private Controller controller;
@@ -31,17 +32,26 @@ public class View {
 		chatWindow.show();
 		initWindow.close();
 	}
-	
-	public void displayMessage(String msg) {
-		chatWindow.displayMessage(msg);
+		
+	public void displayMessage(Message message) {
+		chatWindow.displayMessage(message);
 	}
 	
-	public void confirmMessage(int id) {
+	public void heartbeat() {
+		chatWindow.heartbeat();
+	}
+	
+	
+	/*
+	 * 下面的方法更合理
+	 */
+	
+	public void displayMessage(String text) {
 		
 	}
+	public void confirmMessage(int id) {
+//		System.out.println("message " + id +" was successfully delivered.");
+		chatWindow.confirmMessage(id);
+	}
 
-	
-	
-	
-	
 }

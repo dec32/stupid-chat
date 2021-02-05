@@ -9,6 +9,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
+import model.message.AcknowledgeMessage;
+import model.message.HeartbeatMessage;
+import model.message.Message;
+import model.message.TextMessage;
 import view.View;
 
 public class Model {
@@ -45,7 +49,6 @@ public class Model {
 	//通过 STUN 服务器获取自己的公网地址和端口，初始化消息接收线程和打洞线程
 	public void launch() {
 		publicSocketAddress = stunner.stun();
-//		receiveThread = new ReceiveThread(view, receiver);
 		receiveThread = new ReceiveThread(this);
 		receiveThread.start();
 		punchThread = new PunchThread(holePuncher);
@@ -54,6 +57,7 @@ public class Model {
 	}
 	
 	public void exit() {
+		//TODO 这里的方法可以被调用，但不知道为什么关闭窗口时无法关闭程序
 		receiveThread.exit();
 		punchThread.exit();
 	}
@@ -66,53 +70,33 @@ public class Model {
 	}
 	
 	public void send(String msg, SocketAddress socketAddress) {
-		sender.sendMessage(msg, socketAddress);
+		TextMessage textMessage = new TextMessage(socketAddress, msg);
+		sender.send(textMessage);
 	}
 	
-	//利用receiver获取一条消息，并且解析
-//	public void receive() {
-//		String jsonString = receiver.receive();
-//		JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-//		String type = jsonObject.get("type").getAsString();
-//		if("message".equals(type)) {
-//			//TODO 回复确认报文
-//			String msg = jsonObject.get("content").getAsString();
-//			//委托图形线程更新组件
-//			Platform.runLater(()->{			
-//				view.displayMessage(msg);
-//			});	
-//			int id = jsonObject.get("id").getAsInt();
-//			jsonObject = new JsonObject();
-//			jsonObject.addProperty("type", "ack");
-//			jsonObject.addProperty("id", id);
-//			//把确认报文发回去
-//		}else if("heartbeat".equals(type)) {
-//			//kinda do nothing, would add something here later, something like update the online/offline status of the person who send the packet
-//		}else if("ack".equals(type)) {
-//			//TODO 收到确认报文该怎么办？叫View去更新
-//		}
-//	}		
+	public void send(Message message) {
+		sender.send(message);
+	}
 	
-	
-	
+	//利用receiver获取一条消息，并且解析	
 	public void receive() {
-		Pack pack = receiver.receive();
-		String type = pack.getType();
-		if("text".equals(type)) {
-			//TODO 回复确认报文
-			String msg = pack.getString("content");
-			//委托图形线程更新组件
+		Message message = receiver.receive();
+		if(message instanceof TextMessage) {
+			TextMessage textMessage = (TextMessage)message;
+			String text = textMessage.getContent();
 			Platform.runLater(()->{			
-				view.displayMessage(msg);
+//				view.displayMessage(text);
+				view.displayMessage(message);
 			});	
-			//把确认报文发回去
-			sender.acknowledge(pack.getInt("id"), pack.getSourceSocketAddress());		
-		}else if("heartbeat".equals(type)) {
-			//kinda do nothing, would add something here later, something like update the online/offline status of the person who send the packet
-		}else if("ack".equals(type)) {
+			AcknowledgeMessage acknowledgeMessage = new AcknowledgeMessage(textMessage.getSocketAddress(), textMessage.getId());
+			sender.send(acknowledgeMessage);
+		}else if(message instanceof AcknowledgeMessage) {
 			//TODO 收到确认报文该怎么办？叫View去更新
-			view.confirmMessage(pack.getInt("id"));
-			
+			AcknowledgeMessage acknowledgeMessage = (AcknowledgeMessage)message;
+			view.confirmMessage(acknowledgeMessage.getId());
+		}else if(message instanceof HeartbeatMessage) {
+			//kinda do nothing, would add something here later, something like update the online/offline status of the person who send the packet
+			view.heartbeat();
 		}
 	}
 }

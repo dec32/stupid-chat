@@ -8,6 +8,7 @@ import controller.Controller;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,12 +23,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.message.Message;
+import model.message.TextMessage;
 import util.MessageType;
 
 public class ChatWindow extends Stage{
 	private Controller controller;
 	private SocketAddress socketAddress;
 	
+	private Heart heart = new Heart();
+	private VBox heartBar = new VBox();
 	private VBox msgPane = new VBox();
 	private ScrollPane msgScrollPane;
 	private TextField typeField = new TextField();
@@ -50,13 +55,14 @@ public class ChatWindow extends Stage{
 	
 	public void initUI() {
 		VBox mainLayout = new VBox();
-		
+		heartBar.getChildren().add(heart);
+		heartBar.setPadding(new Insets(5));
 		msgScrollPane = new ScrollPane(msgPane);
 		msgScrollPane.setFitToWidth(true);
 		msgScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		msgScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		HBox typePane = new HBox(typeField,sendButton);
-		mainLayout.getChildren().addAll(msgScrollPane, typePane);
+		mainLayout.getChildren().addAll(heartBar, msgScrollPane, typePane);
 		//方便测试，待删除
 //		mainLayout.getChildren().add(consoleView);
 		
@@ -72,16 +78,6 @@ public class ChatWindow extends Stage{
 		this.setHeight(400);
 		this.setTitle("Stupid Chat");
 		this.setScene(new Scene(mainLayout));
-		
-//		MessageBubble sendedMessageBubble = new MessageBubble("发出消息",MessageType.SENDED);
-//		MessageBox sendedMessageBox = new MessageBox(sendedMessageBubble);
-//		
-//		MessageBubble receivedMessageBubble = new MessageBubble("收到消息",MessageType.RECIEVED);
-//		MessageBox receivedMessageBox = new MessageBox(receivedMessageBubble);
-//		
-//		
-//		msgPane.getChildren().add(sendedMessageBox);
-//		msgPane.getChildren().add(receivedMessageBox);
 	}
 	
 	public void initListener() {
@@ -101,15 +97,35 @@ public class ChatWindow extends Stage{
 	}
 	
 	private void on_send() {
-		String msg = typeField.getText();
+		String content = typeField.getText();
+		TextMessage textMessage = new TextMessage(socketAddress, content);
 		typeField.clear();
-		msgPane.getChildren().add(new MessageBox(new MessageBubble(msg, MessageType.SENDED)));
-		controller.send(msg, socketAddress);
+		msgPane.getChildren().add(new MessageBox(textMessage, MessageType.SENDED));
+		controller.send(textMessage);
+		
+		
+//		String content = typeField.getText();
+//		typeField.clear();
+//		msgPane.getChildren().add(new MessageBox(new MessageBubble(content, MessageType.SENDED)));
+//		controller.send(content, socketAddress);
 		
 	}
 	
-	public void displayMessage(String msg) {
-		msgPane.getChildren().add(new MessageBox(new MessageBubble(msg, MessageType.RECIEVED)));
+	public void displayMessage(Message message) {
+		msgPane.getChildren().add(new MessageBox(message, MessageType.RECIEVED));
+	}
+	
+	public void confirmMessage(int id) {
+		for(Node n:msgPane.getChildren()) {
+			MessageBox mb = (MessageBox)n;
+			if(mb.getMessageId() == id) {
+				mb.confirm();
+			}
+		}
+	}
+	
+	public void heartbeat() {
+		heart.beat();
 	}
 	
 	

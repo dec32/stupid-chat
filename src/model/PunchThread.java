@@ -7,9 +7,11 @@ public class PunchThread extends Thread{
 		this.holePuncher = holePuncher;
 	}
 	public void run() {
+		System.out.println("Hole punching thread started.");
 		while(!exit) {
 			holePuncher.punch();
 		}
+		System.out.println("Hole punching thread stoped.");
 	}
 
 	public void exit() {

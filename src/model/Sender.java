@@ -14,6 +14,9 @@ import java.util.Random;
 
 import com.google.gson.JsonObject;
 
+import model.message.Message;
+import model.message.MessageParser;
+
 public class Sender {
 	private DatagramSocket socket;	
 	
@@ -22,25 +25,40 @@ public class Sender {
 		this.socket = socket;
 	}
 	
-	public void sendMessage(String msg, SocketAddress socketAddress) {
-		JsonObject json = new JsonObject();
-		json.addProperty("type", "text");
-		json.addProperty("content", msg);
-		json.addProperty("id", new Random().nextInt(8192));//生成一个随机数作为消息的 id
+	
+	public void send(Message message) {
+		SocketAddress socketAddress = message.getSocketAddress();
+		String json = MessageParser.toJson(message);
+		byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
+		DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
+		packet.setSocketAddress(socketAddress);
 		try {
-			byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
-			DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
-			packet.setSocketAddress(socketAddress);
 			socket.send(packet);
-			System.out.printf("Message sended: %s\n", msg);
-		} catch (UnknownHostException e) {
-			System.out.println("Failed to send message: " + msg);
 		} catch (IOException e) {
-			System.out.println("Failed to send message: " + msg);
+			System.out.println("Failed to send message: " + json);
 		}
+		System.out.printf("Message sended: %s\n", json);
 	}
 	
-	public void acknowledge(int id,InetSocketAddress sourceSocketAddress) {
+//	public void sendMessage(String msg, SocketAddress socketAddress) {
+//		JsonObject json = new JsonObject();
+//		json.addProperty("type", "text");
+//		json.addProperty("content", msg);
+//		json.addProperty("id", new Random().nextInt(8192));//生成一个随机数作为消息的 id
+//		try {
+//			byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
+//			DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
+//			packet.setSocketAddress(socketAddress);
+//			socket.send(packet);
+//			System.out.printf("Message sended: %s\n", msg);
+//		} catch (UnknownHostException e) {
+//			System.out.println("Failed to send message: " + msg);
+//		} catch (IOException e) {
+//			System.out.println("Failed to send message: " + msg);
+//		}
+//	}
+	
+	public void acknowledge(int id, SocketAddress sourceSocketAddress) {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("type", "ack");
 		jsonObject.addProperty("id", id);

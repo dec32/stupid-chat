@@ -7,9 +7,11 @@ public class ReceiveThread extends Thread{
 		this.model = model;
 	}
 	public void run() {
+		System.out.println("Message receiving thread started.");
 		while(!exit) {
 			model.receive();
 		}
+		System.out.println("Message receiving thread stoped.");
 	}
 
 	public void exit() {

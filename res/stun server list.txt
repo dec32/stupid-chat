@@ -1,1 +1,8 @@
 stun.voip.aebc.com:3478
+stun.sipgate.net:10000
+stun.ideasip.com:3478
+stun.schlund.de:3478
+stun.voiparound.com:3478
+stun.voipbuster.com:3478
+stun.voipstunt.com:3478
+stun.xten.com:3478

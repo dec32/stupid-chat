@@ -15,13 +15,17 @@ public class MessageBubble extends Label{
 		this.setMaxWidth(MAX_WIDTH);
 		this.setWrapText(true);
 		if(messageType==MessageType.SENDED) {
-			this.setStyle("-fx-background-radius: 10px; -fx-background-color: rgb(179,231,244);");
+			this.setStyle("-fx-background-radius: 10px; -fx-background-color: rgb(220,220,220);");
 		}else {
 			this.setStyle("-fx-background-radius: 10px; -fx-background-color: rgb(220,220,220);");
 		}
 	}
 	public MessageType getMessageType() {
 		return messageType;
+	}
+	
+	public void confirm() {
+		this.setStyle("-fx-background-radius: 10px; -fx-background-color: rgb(179,231,244);");
 	}
 	
 }

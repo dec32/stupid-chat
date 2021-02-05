@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+
+import model.message.Message;
+import model.message.MessageParser;
 
 public class Receiver{
 	private DatagramSocket socket;
@@ -18,7 +22,7 @@ public class Receiver{
 	 * 直到收到有效的包之前，一直循环
 	 * 如果收到了有效的包，就跳出循环，返回文本内容
 	 */
-//	public String receive() {
+//	public Pack receive() {
 //		byte[] buf = new byte[200];
 //		DatagramPacket packet = new DatagramPacket(buf, buf.length);
 //		while(true) {
@@ -32,13 +36,15 @@ public class Receiver{
 //			break;
 //		}
 //		//TODO：是时候开始考虑设计 message 类了
-//		packet.getAddress().getHostAddress();
-//		String msg = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-//		System.out.println("Message recieved: " + msg);
-//		return msg;
+//		InetSocketAddress sourceSocketAddress = (InetSocketAddress) packet.getSocketAddress();
+//		String json = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
+//		Pack pack = new Pack(sourceSocketAddress, json);
+//		System.out.println("Message recieved: " + json);
+//		return pack;
 //	}
 	
-	public Pack receive() {
+	
+	public Message receive() {
 		byte[] buf = new byte[200];
 		DatagramPacket packet = new DatagramPacket(buf, buf.length);
 		while(true) {
@@ -51,13 +57,14 @@ public class Receiver{
 			}
 			break;
 		}
-		//TODO：是时候开始考虑设计 message 类了
-		InetSocketAddress sourceSocketAddress = (InetSocketAddress) packet.getSocketAddress();
+		SocketAddress socketAddress = packet.getSocketAddress();
 		String json = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-		Pack pack = new Pack(sourceSocketAddress, json);
-		System.out.println("Message recieved: " + json);
-		return pack;
+		if(!"{\"type\":\"heartbeat\"}".equals(json)) {
+			System.out.println("Message recieved: " + json);
+		}	
+		return MessageParser.parse(json, socketAddress);
 	}
+	
 	
 	
 }

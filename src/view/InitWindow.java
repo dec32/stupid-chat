@@ -41,7 +41,7 @@ public class InitWindow extends Stage{
 		startButton.prefWidthProperty().bind(mainLayout.widthProperty());
 		mainLayout.setPadding(new Insets(10));
 		mainLayout.setSpacing(5);
-		this.setTitle("≥ı ºªØ");
+		this.setTitle("Initialize");
 		this.setWidth(250);
 		this.setHeight(180);
 		this.setResizable(false);

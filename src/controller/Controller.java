@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import model.Model;
+import model.message.Message;
 import view.View;
 
 public class Controller {
@@ -23,6 +24,10 @@ public class Controller {
 	//method to call
 	public void send(String msg, SocketAddress socketAddress) {
 		model.send(msg, socketAddress);
+	}
+	
+	public void send(Message message) {
+		model.send(message);
 	}
 	
 	public void startChat(InetSocketAddress inetSocketAddress) {

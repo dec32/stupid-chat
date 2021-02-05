@@ -14,7 +14,7 @@ public class HolePuncher{
 	private DatagramSocket socket;
 	private DatagramPacket packet;
 	private List<InetSocketAddress> destList = new ArrayList<InetSocketAddress>();
-	private static final int punchPeriod = 10000;//每10秒进行一次 punch
+	private static final int PUNCH_PERIOD = 250;//每5秒进行一次 punch
 	
 	public HolePuncher(DatagramSocket socket) {
 		this.socket = socket;
@@ -33,24 +33,18 @@ public class HolePuncher{
 		} catch (IOException e) {
 			System.out.println("打洞报文发送失败。");
 		}
+		
 	}
 	
 	//周期性的向目的列表中所有的端口发送打洞报文
 	public void punch() {
-		if(destList.size() == 0) {
-			try {
-				Thread.sleep(punchPeriod);
-			} catch (InterruptedException e) {
-				// do nothing
-			}	
-		}
 		for (InetSocketAddress dest : destList) {
-			punch(dest);
-			try {
-				Thread.sleep(punchPeriod);
-			} catch (InterruptedException e) {
-				// do nothing
-			}
+			punch(dest); 
+		}
+		try {
+			Thread.sleep(PUNCH_PERIOD);
+		} catch (InterruptedException e) {
+			//do nothing
 		}
 	}
 
