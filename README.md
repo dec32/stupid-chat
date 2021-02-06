@@ -1,14 +1,20 @@
 # Stupid-Chat
 
-[DOWNLOAD](https://github.com/dec32/Stupid-Chat/releases/download/v0.1/Stupid.Chat.7z)
-
 A simple P2P instant messaging desktop application relying on stun protocol and UDP.
 
 ![](https://github.com/dec32/Image-Storage/blob/master/Initialization.png)
 
 ![](https://github.com/dec32/Image-Storage/blob/master/Chatting.png)
 
-The application works fine between users behind less strict NAT types since in those cases UDP hole-punching is very efficient. But when symmetric NAT and port restricted NAT are both involved, things get a lot trickier. 
+## Download
+
+You can click the link below to download the program:
+
+[DOWNLOAD](https://github.com/dec32/Stupid-Chat/releases/download/v0.1/Stupid.Chat.7z)
+
+## Introduction
+
+The program works fine between users behind less strict NAT types since in those cases UDP hole-punching is very efficient. But when symmetric NAT and port restricted NAT are both involved, things get a lot trickier. 
 
 To achieve NAT traversal in those obnoxious situations a user needs to predict or guess the public port number of the other who is behind symmetric NAT and in the world of computer science by guess we usually mean brutal force. The program would simply scan the port numbers close to the one the STUN server returns to the other user. 
 
