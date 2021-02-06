@@ -1,4 +1,7 @@
 # Stupid-Chat
+
+[DOWNLOAD](https://github.com/dec32/Stupid-Chat/releases/download/v0.1/Stupid.Chat.7z)
+
 A simple P2P instant messaging desktop application relying on stun protocol and UDP.
 
 ![](https://github.com/dec32/Image-Storage/blob/master/Initialization.png)
