@@ -2,9 +2,7 @@ package model;
 
 public class PortScanThread extends Thread{
 	private PortScanner portScanner;
-	private boolean exit = false;
 	private static final int SCAN_PERIOD = 50;//每 250 ms 向下一个端口发送心跳包
-//	private static final int TIMEOUT = 50000;//最多扫描 50s
 	private static final int MAX_PORT_COUNT = 4000;//最多扫描 4000 个端口
 	public PortScanThread(PortScanner portScanner) {
 		this.portScanner = portScanner;
@@ -16,33 +14,31 @@ public class PortScanThread extends Thread{
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
-			//do nothing
+			System.out.println("Port scanning thread stoped.");
+			return;
 		}
 		long start = System.currentTimeMillis();
 		long end;
 		long cost;
 		int portCount = 0;
-		while(!exit) {
+		while(true) {
 			portScanner.scan();
 			portCount++;
 			try {
 				sleep(SCAN_PERIOD);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Port scanning thread stoped.");
+				return;
 			}
 			end = System.currentTimeMillis();
 			cost = end - start;
 			if(portCount >= MAX_PORT_COUNT) {
 				//当扫描的端口数超过了设定的阈值时，强制终止
-				this.exit();
+				break;
 			}
 		}
-		System.out.println("Port scanning thread stoped.");
 	}
 	
-	public void exit() {
-		exit = true;
-	}
+
 	
 }

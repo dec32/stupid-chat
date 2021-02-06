@@ -70,7 +70,7 @@ public class Model {
 			receiveThread.exit();
 		}
 		if(heartbeatThread != null) {
-			heartbeatThread.exit();
+			heartbeatThread.interrupt();
 		}
 		
 	}
@@ -140,7 +140,9 @@ public class Model {
 			view.updateSocketAddress(message.getSocketAddress());		
 			heartbeater.setDestination(message.getSocketAddress());
 			//关闭端口扫描线程
-			portScanThread.exit();
+			if(portScanThread.isAlive()) {
+				portScanThread.interrupt();
+			}
 		}
 	}
 	
