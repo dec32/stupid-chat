@@ -47,7 +47,6 @@ public class Model {
 		stunner = new Stunner(socket);
 		sender = new Sender(socket);	
 		receiver = new Receiver(socket);	
-//		holePuncher = new HolePuncher(socket);
 		heartbeater = new Heartbeater(socket);
 	}
 	
@@ -86,7 +85,7 @@ public class Model {
 		 * 当然，由于对称型 NAT 的存在，这一目的地可能根本就是无效的
 		 * 真实的目的地需要等对方告知我们，但是，在此之前，我们需要先猜中对方的端口，并且发送一个心跳包过去
 		 * 只有发送了心跳包以后，来自对方真实端口的报文才有办法到达我们的端口
-		 * 在消息接收线程中，每收到一个心跳包，就会更新一次目的端口
+		 * 所以需要开启一个十分疯狂的端口扫描线程
 		 */
 		
 		heartbeatThread = new HeartbeatThread(heartbeater);
@@ -95,9 +94,9 @@ public class Model {
 		view.startChat(inetSocketAddress);
 		
 		//开启端口扫描线程
-//		portScanner = new PortScanner(socket, inetSocketAddress);
-//		portScanThread = new PortScanThread(portScanner);
-//		portScanThread.start();
+		portScanner = new PortScanner(socket, inetSocketAddress);
+		portScanThread = new PortScanThread(portScanner);
+		portScanThread.start();
 	}
 	
 	public void send(String msg, SocketAddress socketAddress) {
@@ -109,9 +108,11 @@ public class Model {
 		sender.send(message);
 	}
 	
-	//利用receiver获取一条消息，并且解析	
+	/*
+	 * 利用receiver获取一条消息，并且解析
+	 * TODO: 这一部分的代码应当挪到别的什么地方去，Model 类本身不该处理这么复杂的逻辑
+	 */
 	public void receive() {
-		
 		Message message = receiver.receive();
 		if(message instanceof TextMessage) {
 			TextMessage textMessage = (TextMessage)message;
@@ -139,7 +140,7 @@ public class Model {
 			view.updateSocketAddress(message.getSocketAddress());		
 			heartbeater.setDestination(message.getSocketAddress());
 			//关闭端口扫描线程
-//			portScanThread.exit();  
+			portScanThread.exit();
 		}
 	}
 }

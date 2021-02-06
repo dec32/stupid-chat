@@ -17,6 +17,10 @@ public class PortScanner {
 	private DatagramPacket packet;
 	private InetAddress inetAddress;
 	private int port;
+	private int count = 0;//用于记录当前已经扫描了多少个端口
+	
+	//向每个端口重复发送多少次心跳包，由于 UDP 比想象中的可靠，这里先设为 1
+	private static final int SEND_TIME = 1;
 	
 	
 	public PortScanner(DatagramSocket socket, SocketAddress dest) {
@@ -31,22 +35,45 @@ public class PortScanner {
 	}
 	
 	//往目的 IP 的当前端口发送一个心跳包，然后更新当前端口
-	public void scan() {
-		System.out.println("now scanning port: " + port);
+	public void scan() {	
 		packet.setAddress(inetAddress);
 		packet.setPort(port);
-		try {
-			socket.send(packet);
-		} catch (IOException e) {
-			// do nothing
+		for (int i = 0; i < SEND_TIME; i++) {
+			try {
+				socket.send(packet);
+			} catch (IOException e) {
+				// do nothing
+			}
+			System.out.println("now scanning port: " + port);
 		}
+		count++;
 		port = nextPort(port);
 	}
 	
+	/*
+	 * 一般情况，下一次端口 = 本次端口 + 1
+	 * 但有一些例外，比如说，当尝试了超过 250 个端口时，就直接回到 1024 (并且重新计数)
+	 * 超过 65535 时也回到 1024
+	 */
+	
+	/*
+	 * 在给定端口的左右反复试探
+	 * 所以，第一次是 +1 第二次是 -2 第三次是 +3 第4次是 -4
+	 */
 	private int nextPort(int port) {
-		port++;
-		if(port >= 65535) {
-			port = 2000;
+//		port++;
+//		if(count >= 250 ||port >= 65535) {
+//			port = 1024;
+//			count = 0;
+//		}
+//		return port;
+		if(count%2 == 1) {
+			port+=count;
+		}else {
+			port-=count;
+		}
+		if(port > 65535 || port <= 0) {
+			port = 1024;
 		}
 		return port;
 	}
