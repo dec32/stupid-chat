@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 
@@ -13,6 +14,7 @@ import model.message.MessageParser;
 
 public class Receiver{
 	private DatagramSocket socket;
+	private boolean exit = false;
 
 	public Receiver(DatagramSocket socket) {
 		this.socket = socket;
@@ -22,27 +24,6 @@ public class Receiver{
 	 * 直到收到有效的包之前，一直循环
 	 * 如果收到了有效的包，就跳出循环，返回文本内容
 	 */
-//	public Pack receive() {
-//		byte[] buf = new byte[200];
-//		DatagramPacket packet = new DatagramPacket(buf, buf.length);
-//		while(true) {
-//			try {
-//				socket.receive(packet);
-//			} catch (SocketTimeoutException e) {
-//				continue;
-//			} catch (IOException e) {
-//				continue;
-//			}
-//			break;
-//		}
-//		//TODO：是时候开始考虑设计 message 类了
-//		InetSocketAddress sourceSocketAddress = (InetSocketAddress) packet.getSocketAddress();
-//		String json = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-//		Pack pack = new Pack(sourceSocketAddress, json);
-//		System.out.println("Message recieved: " + json);
-//		return pack;
-//	}
-	
 	
 	public Message receive() {
 		byte[] buf = new byte[200];
@@ -51,11 +32,15 @@ public class Receiver{
 			try {
 				socket.receive(packet);
 			} catch (SocketTimeoutException e) {
-				continue;
+				if(!exit) {
+					continue;
+				}
+				return null;
 			} catch (IOException e) {
-				continue;
+				e.printStackTrace();
 			}
 			break;
+			
 		}
 		SocketAddress socketAddress = packet.getSocketAddress();
 		String json = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
@@ -63,6 +48,10 @@ public class Receiver{
 			System.out.println("Message recieved: " + json);
 		}	
 		return MessageParser.parse(json, socketAddress);
+	}
+	
+	public void exit() {
+		exit = true;
 	}
 	
 	

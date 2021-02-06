@@ -10,14 +10,28 @@ public class HeartbeatThread extends Thread{
 	
 	@Override
 	public void run() {
+		System.out.println("Heartbeat thread started.");
 		while(!exit) {
 			heartbeater.heartbeat();
 			try {
 				sleep(BEAT_PERIOD);
 			} catch (InterruptedException e) {
-				continue;
+				return;
 			}
 		}
+		System.out.println("Heartbeat thread stoped.");
+		
+//		while(true) {
+//			if(this.isInterrupted()) {
+//				return;
+//			}
+//			heartbeater.heartbeat();
+//			try {
+//				sleep(BEAT_PERIOD);
+//			} catch (InterruptedException e) {
+//				return;
+//			}
+//		}
 		
 	}
 	

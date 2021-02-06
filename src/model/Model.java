@@ -72,9 +72,6 @@ public class Model {
 		if(heartbeatThread != null) {
 			heartbeatThread.exit();
 		}
-//		if(punchThread != null) {
-//			punchThread.exit();
-//		}	
 		
 	}
 		
@@ -114,6 +111,9 @@ public class Model {
 	 */
 	public void receive() {
 		Message message = receiver.receive();
+		if(message == null) {
+			return;
+		}
 		if(message instanceof TextMessage) {
 			TextMessage textMessage = (TextMessage)message;
 			String text = textMessage.getContent();
@@ -142,6 +142,10 @@ public class Model {
 			//关闭端口扫描线程
 			portScanThread.exit();
 		}
+	}
+	
+	public void stopReceiving() {
+		receiver.exit();
 	}
 }
 
