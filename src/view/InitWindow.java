@@ -41,7 +41,7 @@ public class InitWindow extends Stage{
 		startButton.prefWidthProperty().bind(mainLayout.widthProperty());
 		mainLayout.setPadding(new Insets(10));
 		mainLayout.setSpacing(5);
-		this.setTitle("Initialize");
+		this.setTitle("³õÊ¼»¯");
 		this.setWidth(250);
 		this.setHeight(180);
 		this.setResizable(false);
@@ -52,6 +52,10 @@ public class InitWindow extends Stage{
 		});
 		remoteSocketAddressField.setOnAction(e->{
 			on_start();
+		});
+		
+		this.setOnCloseRequest(e->{
+			controller.exit();
 		});
 	}
 	

@@ -41,6 +41,12 @@ public class View {
 		chatWindow.heartbeat();
 	}
 	
+	/*
+	 * 待删除的方法
+	 */
+	public void updateSocketAddress(SocketAddress socketAddress) {
+		chatWindow.setSocketAddress(socketAddress);
+	}
 	
 	/*
 	 * 下面的方法更合理

@@ -59,7 +59,7 @@ public class Receiver{
 		}
 		SocketAddress socketAddress = packet.getSocketAddress();
 		String json = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-		if(!"{\"type\":\"heartbeat\"}".equals(json)) {
+		if(!"{}".equals(json)) {
 			System.out.println("Message recieved: " + json);
 		}	
 		return MessageParser.parse(json, socketAddress);

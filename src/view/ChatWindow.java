@@ -128,6 +128,10 @@ public class ChatWindow extends Stage{
 		heart.beat();
 	}
 	
+	public void setSocketAddress(SocketAddress socketAddress) {
+		this.socketAddress = socketAddress;
+	}
+	
 	
 
 }

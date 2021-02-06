@@ -18,15 +18,19 @@ import view.View;
 public class Model {
 	private View view;
 	private DatagramSocket socket;
+	private InetSocketAddress publicSocketAddress;
+	
 	private Stunner stunner;
 	private Sender sender;
-	private Receiver receiver;
-	private ReceiveThread receiveThread;
-	private HolePuncher holePuncher;
-	private PunchThread punchThread;	
-	private InetSocketAddress publicSocketAddress;
+	private Receiver receiver;	
+	private PortScanner portScanner;
+	private Heartbeater heartbeater;
+	
 		
 	
+	private ReceiveThread receiveThread;
+	private PortScanThread portScanThread;
+	private HeartbeatThread heartbeatThread;
 	// to initialize
 	public void setView(View view) {
 		this.view = view;
@@ -36,37 +40,64 @@ public class Model {
 		try {
 			//TODO: 并不是所有功能都需要 socket 提供超时功能
 			socket = new DatagramSocket(0);
-			socket.setSoTimeout(3000);
+			socket.setSoTimeout(1000);
 		} catch (SocketException e) {
 			socket = null;
 		}
 		stunner = new Stunner(socket);
 		sender = new Sender(socket);	
 		receiver = new Receiver(socket);	
-		holePuncher = new HolePuncher(socket);
+//		holePuncher = new HolePuncher(socket);
+		heartbeater = new Heartbeater(socket);
 	}
 	
-	//通过 STUN 服务器获取自己的公网地址和端口，初始化消息接收线程和打洞线程
+	
 	public void launch() {
+		/*
+		 * 利用 STUN 获取自己的公网 ip 和端口以后，启动消息接收线程和心跳线程
+		 * 在一开始，心跳线程并没有设定目的地
+		 * 在用户输入了对方的 ip 地址和端口号以后，就会间接调用 startChat 方法
+		 */
 		publicSocketAddress = stunner.stun();
 		receiveThread = new ReceiveThread(this);
 		receiveThread.start();
-		punchThread = new PunchThread(holePuncher);
-		punchThread.start();
+		
 		view.init(publicSocketAddress);
 	}
 	
 	public void exit() {
 		//TODO 这里的方法可以被调用，但不知道为什么关闭窗口时无法关闭程序
-		receiveThread.exit();
-		punchThread.exit();
+		if(receiveThread != null) {
+			receiveThread.exit();
+		}
+		if(heartbeatThread != null) {
+			heartbeatThread.exit();
+		}
+//		if(punchThread != null) {
+//			punchThread.exit();
+//		}	
+		
 	}
 		
 	// 除了启动一个聊天窗口之外，还需要立即向目标发送一个打洞报文，并且让  hole puncher 持续打洞
 	public void startChat(InetSocketAddress inetSocketAddress) {
+		/*
+		 * 启动聊天，第一件事情就是启动心跳线程，不断地向目的地发送心跳包
+		 * 当然，由于对称型 NAT 的存在，这一目的地可能根本就是无效的
+		 * 真实的目的地需要等对方告知我们，但是，在此之前，我们需要先猜中对方的端口，并且发送一个心跳包过去
+		 * 只有发送了心跳包以后，来自对方真实端口的报文才有办法到达我们的端口
+		 * 在消息接收线程中，每收到一个心跳包，就会更新一次目的端口
+		 */
+		
+		heartbeatThread = new HeartbeatThread(heartbeater);
+		heartbeater.setDestination(inetSocketAddress);
+		heartbeatThread.start();
 		view.startChat(inetSocketAddress);
-		holePuncher.punch(inetSocketAddress);
-		holePuncher.addDesitination(inetSocketAddress);
+		
+		//开启端口扫描线程
+//		portScanner = new PortScanner(socket, inetSocketAddress);
+//		portScanThread = new PortScanThread(portScanner);
+//		portScanThread.start();
 	}
 	
 	public void send(String msg, SocketAddress socketAddress) {
@@ -80,6 +111,7 @@ public class Model {
 	
 	//利用receiver获取一条消息，并且解析	
 	public void receive() {
+		
 		Message message = receiver.receive();
 		if(message instanceof TextMessage) {
 			TextMessage textMessage = (TextMessage)message;
@@ -91,12 +123,23 @@ public class Model {
 			AcknowledgeMessage acknowledgeMessage = new AcknowledgeMessage(textMessage.getSocketAddress(), textMessage.getId());
 			sender.send(acknowledgeMessage);
 		}else if(message instanceof AcknowledgeMessage) {
-			//TODO 收到确认报文该怎么办？叫View去更新
+			//收到确认报文该怎么办？叫View去更新
 			AcknowledgeMessage acknowledgeMessage = (AcknowledgeMessage)message;
 			view.confirmMessage(acknowledgeMessage.getId());
 		}else if(message instanceof HeartbeatMessage) {
-			//kinda do nothing, would add something here later, something like update the online/offline status of the person who send the packet
+			//收到心跳包之后，就让 view 的心跳灯闪一下
 			view.heartbeat();
+			/*
+			 * 我要在这里写一些十分可怕的东西：
+			 * 只要我在这个地方收到了心跳包，我就更新一次socketAddress
+			 * 这样显然是不合理的，第一，这样一来，我就无法同时与多个用户聊天了
+			 * 第二，别人可以很轻易的伪造身份
+			 * 但无论如何，先这么做吧，让软件跑起来再说
+			 */
+			view.updateSocketAddress(message.getSocketAddress());		
+			heartbeater.setDestination(message.getSocketAddress());
+			//关闭端口扫描线程
+//			portScanThread.exit();  
 		}
 	}
 }
