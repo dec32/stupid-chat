@@ -4,6 +4,7 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -25,9 +26,7 @@ public class Model {
 	private Receiver receiver;	
 	private PortScanner portScanner;
 	private Heartbeater heartbeater;
-	
 		
-	
 	private ReceiveThread receiveThread;
 	private PortScanThread portScanThread;
 	private HeartbeatThread heartbeatThread;
@@ -67,7 +66,8 @@ public class Model {
 	public void exit() {
 		//TODO 这里的方法可以被调用，但不知道为什么关闭窗口时无法关闭程序
 		if(receiveThread != null) {
-			receiveThread.exit();
+//			receiveThread.exit();
+			receiveThread.interrupt();
 		}
 		if(heartbeatThread != null) {
 			heartbeatThread.interrupt();
@@ -110,8 +110,10 @@ public class Model {
 	 * TODO: 这一部分的代码应当挪到别的什么地方去，Model 类本身不该处理这么复杂的逻辑
 	 */
 	public void receive() {
-		Message message = receiver.receive();
-		if(message == null) {
+		Message message;
+		try {
+			message = receiver.receive();
+		} catch (SocketTimeoutException e) {
 			return;
 		}
 		if(message instanceof TextMessage) {
@@ -146,9 +148,6 @@ public class Model {
 		}
 	}
 	
-	public void stopReceiving() {
-		receiver.exit();
-	}
 }
 
 

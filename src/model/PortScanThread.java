@@ -9,10 +9,10 @@ public class PortScanThread extends Thread{
 	}
 	@Override
 	public void run() {
-		//启动之前先留出 1s 的缓冲时间，没有什么特殊的原因，只是为了方便本机测试，
+		//启动之前先留出 3s 的缓冲时间，没有什么特殊的原因，只是为了方便本机测试，
 		System.out.println("Port scanning thread started.");
 		try {
-			sleep(1000);
+			sleep(3000);
 		} catch (InterruptedException e) {
 			System.out.println("Port scanning thread stoped.");
 			return;
