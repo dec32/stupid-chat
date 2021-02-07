@@ -8,7 +8,7 @@ A simple P2P instant messaging desktop application relying on stun protocol and 
 
 ![](https://github.com/dec32/Image-Storage/blob/master/Chatting.png)
 
-## Download
+## Download | 下载
 
 You can click the link below to download the program:
 
@@ -16,7 +16,7 @@ You can click the link below to download the program:
 
 [DOWNLOAD](https://github.com/dec32/Stupid-Chat/releases/download/v0.1/Stupid.Chat.7z)
 
-## Introduction
+## Introduction | 介绍
 
 The program works fine between users behind less strict NAT types since in those cases UDP hole-punching is very efficient. But when symmetric NAT and port restricted NAT are both involved, things get a lot trickier. 
 
@@ -26,7 +26,7 @@ To achieve NAT traversal in those obnoxious situations a user needs to predict o
 
 当聊天中的一方处在对称型 NAT 后时，另一方需要去预测或者猜测其端口号。而所谓猜测，说白了就是暴力破解。程序在猜测端口时，会在对方通过 STUN 服务器获取的公网端口的附近扫描。
 
-For example, when port number 8000 is shown on the other user's initialization interface and we input that port number into our program, it automatically sends UDP packets to ports like 8000, 8001, 7999, 8002, 7998 until it receives UDP packets from some certain port and mark it as the available port. 
+For example, when port number 8000 is shown on the other user's initialization interface and we input that port number into our program, it automatically sends UDP packets to ports like 8000, 8001, 7999, 8002, 7998 until it receives UDP packets from some certain port and mark it as the available port.
 
 譬如说，当对方的初始化界面显示 NAT 分配的公网端口为 8000 时，我方则会尝试往 8000、8001、7999、8002、7998 这些端口发送心跳报文。而当我方收到对方的心跳报文时，就把这个报文的源端口标记为对方实际可用的端口。
 
