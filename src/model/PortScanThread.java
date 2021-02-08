@@ -21,6 +21,7 @@ public class PortScanThread extends Thread{
 		long end;
 		long cost;
 		int portCount = 0;
+		//TODO 这么频繁的 sleep 不是什么好设计，应该一次性扫描几十个端口，然后再睡一下，而不是扫一个睡一个
 		while(true) {
 			portScanner.scan();
 			portCount++;

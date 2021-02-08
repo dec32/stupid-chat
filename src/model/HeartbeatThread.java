@@ -2,7 +2,7 @@ package model;
 
 public class HeartbeatThread extends Thread{
 	private Heartbeater heartbeater;
-	private static final int BEAT_PERIOD = 1000;//每1秒进行一次 punch
+	private static final int BEAT_PERIOD = 5000;//每5秒发送一次心跳包
 	public HeartbeatThread(Heartbeater heartbeater) {
 		this.heartbeater = heartbeater;
 	}

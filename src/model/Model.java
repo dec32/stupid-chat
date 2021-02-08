@@ -64,14 +64,13 @@ public class Model {
 	}
 	
 	public void exit() {
-		//TODO 这里的方法可以被调用，但不知道为什么关闭窗口时无法关闭程序
 		if(receiveThread != null) {
-//			receiveThread.exit();
 			receiveThread.interrupt();
 		}
 		if(heartbeatThread != null) {
 			heartbeatThread.interrupt();
 		}
+		
 		
 	}
 		
@@ -94,11 +93,6 @@ public class Model {
 		portScanner = new PortScanner(socket, inetSocketAddress);
 		portScanThread = new PortScanThread(portScanner);
 		portScanThread.start();
-	}
-	
-	public void send(String msg, SocketAddress socketAddress) {
-		TextMessage textMessage = new TextMessage(socketAddress, msg);
-		sender.send(textMessage);
 	}
 	
 	public void send(Message message) {

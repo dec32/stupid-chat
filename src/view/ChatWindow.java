@@ -17,6 +17,7 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -31,12 +32,15 @@ public class ChatWindow extends Stage{
 	private Controller controller;
 	private SocketAddress socketAddress;
 	
+	private OnlineIndicator onlineIndicator = new OnlineIndicator();
 	private Heart heart = new Heart();
-	private VBox heartBar = new VBox();
+	private HBox statusBar = new HBox();
+//	private AnchorPane statusBar = new AnchorPane();
+	private HBox heartBar = new HBox();
 	private VBox msgPane = new VBox();
 	private ScrollPane msgScrollPane;
 	private TextField typeField = new TextField();
-	private Button sendButton = new Button("发送"); 
+	private Button sendButton = new Button("Send"); 
 	//方便测试，待删除
 //	private ConsoleView consoleView = new ConsoleView();
 	
@@ -55,16 +59,21 @@ public class ChatWindow extends Stage{
 	
 	public void initUI() {
 		VBox mainLayout = new VBox();
-		heartBar.getChildren().add(heart);
-		heartBar.setPadding(new Insets(5));
+		//状态栏，用于表示在线的绿灯和表示心跳包的红心
+		statusBar.getChildren().addAll(onlineIndicator, heart);
+		statusBar.setPadding(new Insets(5));
+		statusBar.setSpacing(5);
+//		AnchorPane.setLeftAnchor(onlineIndicator, 0.0);
+//		AnchorPane.setTopAnchor(onlineIndicator, 0.0);
+//		AnchorPane.setRightAnchor(heart, 0.0);
+//		AnchorPane.setTopAnchor(heart, 0.0);
+		
 		msgScrollPane = new ScrollPane(msgPane);
 		msgScrollPane.setFitToWidth(true);
 		msgScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		msgScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		HBox typePane = new HBox(typeField,sendButton);
-		mainLayout.getChildren().addAll(heartBar, msgScrollPane, typePane);
-		//方便测试，待删除
-//		mainLayout.getChildren().add(consoleView);
+		mainLayout.getChildren().addAll(statusBar, msgScrollPane, typePane);
 		
 		VBox.setVgrow(msgScrollPane, Priority.ALWAYS);
 		HBox.setHgrow(typeField, Priority.ALWAYS);
@@ -104,11 +113,6 @@ public class ChatWindow extends Stage{
 		controller.send(textMessage);
 		
 		
-//		String content = typeField.getText();
-//		typeField.clear();
-//		msgPane.getChildren().add(new MessageBox(new MessageBubble(content, MessageType.SENDED)));
-//		controller.send(content, socketAddress);
-		
 	}
 	
 	public void displayMessage(Message message) {
@@ -126,6 +130,7 @@ public class ChatWindow extends Stage{
 	
 	public void heartbeat() {
 		heart.beat();
+		onlineIndicator.beat();
 	}
 	
 	public void setSocketAddress(SocketAddress socketAddress) {

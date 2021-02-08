@@ -22,10 +22,6 @@ public class Controller {
 	}
 	
 	//method to call
-	public void send(String msg, SocketAddress socketAddress) {
-		model.send(msg, socketAddress);
-	}
-	
 	public void send(Message message) {
 		model.send(message);
 	}

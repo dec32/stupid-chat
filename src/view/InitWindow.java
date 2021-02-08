@@ -18,11 +18,11 @@ import javafx.stage.Stage;
 
 public class InitWindow extends Stage{
 	private Controller controller;
-	private Label socketAddressLabel = new Label("我");
+	private Label socketAddressLabel = new Label("You:");
 	private TextField socketAddressField = new TextField();
-	private Label remoteSocketAddressLabel = new Label("对方");
+	private Label remoteSocketAddressLabel = new Label("Friend:");
 	private TextField remoteSocketAddressField = new TextField();
-	private Button startButton = new Button("发起聊天");
+	private Button startButton = new Button("Chat");
 	
 	public InitWindow(Controller controller,InetSocketAddress publicSocketAddress) {
 		this.controller = controller;
@@ -39,11 +39,11 @@ public class InitWindow extends Stage{
 			startButton
 		);
 		startButton.prefWidthProperty().bind(mainLayout.widthProperty());
-		mainLayout.setPadding(new Insets(10));
+		mainLayout.setPadding(new Insets(15, 10, 10, 10));
 		mainLayout.setSpacing(5);
-		this.setTitle("初始化");
+		this.setTitle("Setting Up");
 		this.setWidth(250);
-		this.setHeight(180);
+//		this.setHeight(180);
 		this.setResizable(false);
 		this.setScene(new Scene(mainLayout));
 		

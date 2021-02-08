@@ -1,17 +1,15 @@
 package view;
 
 
-import java.io.File;
-import java.net.MalformedURLException;
-
 import javafx.animation.AnimationTimer;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
-public class Heart extends ImageView {
-	private Image greyHeartImage;
-	private Image redHeartImage;
-	private static final int MAX_TTL = 500;
+public class OnlineIndicator extends Circle {
+	private static final Color ON = Color.LIMEGREEN;
+	private static final Color OFF = Color.LIGHTGREY;
+	private static final int RADIUS = 5;
+	private static final int MAX_TTL = 10000;
 	private int ttl;
 	private AnimationTimer timer;
 	/*
@@ -21,22 +19,14 @@ public class Heart extends ImageView {
 	 * 当 MAX_TTL 设置得比较大时，这个东西会处于常亮的状态，因为这个东西还没来得及熄灭时，又一个心跳报文把这个东西状态拉满了
 	 * 
 	 */
-	public Heart() {
-		
-		try {
-			greyHeartImage = new Image(new File("res/grey heart.png").toURI().toURL().toString());
-			redHeartImage = new Image(new File("res/red heart.png").toURI().toURL().toString());
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		this.setImage(greyHeartImage);
+	public OnlineIndicator() {
+		super(RADIUS);
 		ttl = 0;
+		this.setFill(OFF);
 		timer = new AnimationTimer() {	
 			public void handle(long now) {
 				if(ttl <= 0) {
-					Heart.this.setImage(greyHeartImage);
+					OnlineIndicator.this.setFill(OFF);
 					return;
 				}
 				ttl -= 1000.0/60.0;
@@ -45,7 +35,7 @@ public class Heart extends ImageView {
 		timer.start();
 	}
 	public void beat() {
-		this.setImage(redHeartImage);
+		this.setFill(ON);
 		ttl = MAX_TTL;
 	}
 }
