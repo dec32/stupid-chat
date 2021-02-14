@@ -14,7 +14,7 @@ You can click the link below to download the program:
 
 你可以点击下面的链接，下载来玩一玩：
 
-[DOWNLOAD](https://github.com/dec32/Stupid-Chat/releases/download/v0.1/Stupid.Chat.7z)
+[DOWNLOAD](https://github.com/dec32/Stupid-Chat/releases/download/v0.1.1/Stupid.Chat.7z)
 
 ## Introduction | 介绍
 
