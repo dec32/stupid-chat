@@ -4,9 +4,9 @@ A simple P2P instant messaging desktop application relying on stun protocol and 
 
 利用 STUN 协议和 UDP 实现的简单 P2P 聊天客户端。
 
-![](https://github.com/dec32/Image-Storage/blob/master/Initialization.png)
+![](./docs/Initialization.png)
 
-![](https://github.com/dec32/Image-Storage/blob/master/Chatting.png)
+![](./docs/Chatting.png)
 
 ## Download | 下载
 
